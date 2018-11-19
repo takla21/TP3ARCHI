@@ -1,0 +1,18 @@
+{
+  "name": "API_TP4_log8430",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "^8.0"
+  },
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.0",
+    "moment": "^2.19.3",
+    "morgan": "^1.9.0",
+    "request": "^2.81.0"
+  }
+}

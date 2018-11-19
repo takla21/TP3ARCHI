@@ -1,0 +1,3 @@
+[submodule "lib/commonlib"]
+	path = lib/commonlib
+	url = https://bitbucket.org/escalade/lib.git
