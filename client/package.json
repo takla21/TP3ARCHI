@@ -1,0 +1,14 @@
+{
+  "name": "CLIENT_TP4_log8430",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "^8.0"
+  },
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "request": "^2.81.0"
+  }
+}
