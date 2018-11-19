@@ -16,6 +16,12 @@ const {action, uri, body, filename, pipe, verbose} = require('./common/arg-parse
         name : ["-h", "--help"],
         func : () => {
             console.log(`
+    -a --action : le verb de la requête http (method)
+    -u --uri : l'uri de la requête
+    -b --body : un document json a envoyé avec la requête
+    -f --filename : le path d'un document json (.json obligatoire) a envoyé. l'option body est prioritaire a filename
+    -pi --pipe : (boolean) envois la réponse dans la sortie standard plutôt que d'utiliser console.log
+    -vv --verbose : permet de voir la profondeur complète des objets retourné (utilise JSON.stringify(obj, null, 4) sur la sortie)
 `);
             process.exit();
         },
