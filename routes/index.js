@@ -5,8 +5,20 @@ const path = require('path');
 
 const settings = require(path.join(DOCUMENT_ROOT, 'lib', 'settings'));
 
-/* redirect home page. */
-router.get('/', function(req, res, next) {
+router.get('/facture', function(req, res, next) {
+    const factures = [{}]; //hardcoded
+    res.json(factures)
+});
+
+router.put('/facture', function(req, res, next) {
+    
+});
+
+router.post('/facture', function(req, res, next) {
+    
+});
+
+router.delete('/facture', function(req, res, next) {
     
 });
 
