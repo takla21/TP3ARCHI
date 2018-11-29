@@ -10,6 +10,7 @@ const hypermedia = require(path.join(DOCUMENT_ROOT, "model", "hypermedia"));
 //API entry point
 router.get("", function(req, res, next) {
     res.json({
+        description : "",
         __hypermedia : [
             {
                 uri : "/facture",
@@ -19,12 +20,12 @@ router.get("", function(req, res, next) {
             {
                 uri : "/facture",
                 method : "POST",
-                description : "ajouter une facture"
+                description : "Ajouter une facture"
             },
             {
                 uri : "/requete-produit-frequent",
                 method : "POST",
-                description : "Dépose une requête de calcul des produits fréquents"
+                description : "Déposer une requête de calcul des produits fréquents"
             }
         ]
     })
@@ -38,8 +39,9 @@ router.get('/facture', function(req, res, next) {
             return f;
         })
         res.json({
+            message : "Liste des factures",
             result : hypermediaFacture,
-            _h : []
+            __hypermedia : []
         });
     })
 });
@@ -47,6 +49,7 @@ router.get('/facture', function(req, res, next) {
 router.post('/facture', function(req, res, next) {
     BD.create("facture", req.body).then(fact => {
         res.json({
+            message : `Facture #${fact._id} ajouter`,
             result : fact,
             __hypermedia : hypermedia.createFactureHypermedia(fact._id)
         });
@@ -58,6 +61,7 @@ router.post('/facture', function(req, res, next) {
 router.put('/facture/:id', function(req, res, next) {
     BD.replace("facture", req.params.id, req.body).then(result => {
         res.json({
+            message : `Facture #${req.params._id} modifier`,
             result : result,
             __hypermedia : hypermedia.createFactureHypermedia(req.params._id)
         })
@@ -67,6 +71,7 @@ router.put('/facture/:id', function(req, res, next) {
 router.delete('/facture/:id', function(req, res, next) {
     BD.remove("facture", req.params.id).then(result => {
         res.json({
+            message : `Facture #${req.params._id} supprimer`,
             result : result,
             __hypermedia : hypermedia.createFactureHypermedia(req.params._id)
         })
@@ -74,45 +79,54 @@ router.delete('/facture/:id', function(req, res, next) {
 });
 
 router.post("/requete-produit-frequent", function(req, res, next) {
-    //1. verify if creating process is in progress
-    //2. if yes, return id of current process
-    //3. if no, create id, send it, and start process.
-    
     spark.createRequest().then(id => {
         res.json({
             __hypermedia : [
                 {
-                    uri : `/produit-frequent/${id}`,
+                    uri : `/produit-frequent/requete-status/${id}`,
                     method : "GET",
                     description : "acceder au résultat de la recherche des produits fréquent"
                 }
             ]
         })
+    }).catch(err => {
+        next(err);
     })
 })
 
 router.get("/produit-frequent/requete-status/:reqid", function(req, res, next) {
-    //retourne le progrès de la requête. donc :
-    //if process is in progress
-    //return : % of completion (if available). status : 200. 
-    //id process finished
-    //return : uri to get product. status : 200.
+    spark.getProgress(req.params.reqid).then(result => {
+        if(result) {
+            const responseData = {
+                status : result.status
+            }
+
+            if(result.status === "COMPLETE") {
+                responseData.__hypermedia = [{
+                    uri : `/produit-frequent/requete-data/${req.params.reqid}`,
+                    method : "GET",
+                    description : `récupérer les données de la requête de produit fréquent #${req.params.reqid}`
+                }]
+            }
+            res.status(200);
+            res.json(responseData)
+        } else {
+            res.sendStatus(404);
+        }
+    })
 })
 
 router.get("/produit-frequent/requete-data/:reqid", function(req, res, next) {
-    //si la requête n'es pas prête : 404.
-    //si la requête est prête : résultat.
-})
-
-
-//abort une requête
-router.delete("/requete-produit-frequent/:reqid", function(req, res, next) {
-   
-})
-
-//abort toute les requête
-router.delete("/requete-produit-frequent", function(req, res, next) {
-
+    spark.getData(req.params.reqid).then(result => {
+        if(result) {
+            res.status(200);
+            res.json({
+                data : result
+            })
+        } else {
+            res.sendStatus(404);
+        }
+    })
 })
 
 module.exports = router;

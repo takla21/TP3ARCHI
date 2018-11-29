@@ -1,27 +1,16 @@
 #!/usr/bin/env node
 
+require("colors")
 const util = require("util");
 const request = util.promisify(require("request"));
-const fs = util.promisify
-const path = require('path');
 
-const {action, uri, body, filename, pipe, verbose} = require('./common/arg-parser.js')([
-    {name : ["-a", "--action"]},
-    {name : ["-u", "--uri"]},
-    {name : ["-b", "--body"]},
-    {name : ["-f", "--filename"]},
-    {name : ["-pi", "--pipe"], numOfParam : 0},
-    {name : ["-vv", "--verbose"], numOfParam : 0},
+const {uri} = require('./arg-parser.js')([
+    {name : ["-u", "--uri"], required : true},
     {
         name : ["-h", "--help"],
         func : () => {
             console.log(`
-    -a --action : le verb de la requête http (method)
-    -u --uri : l'uri de la requête
-    -b --body : un document json a envoyé avec la requête
-    -f --filename : le path d'un document json (.json obligatoire) a envoyé. l'option body est prioritaire a filename
-    -pi --pipe : (boolean) envois la réponse dans la sortie standard plutôt que d'utiliser console.log
-    -vv --verbose : permet de voir la profondeur complète des objets retourné (utilise JSON.stringify(obj, null, 4) sur la sortie)
+    -u --uri : l'adresse de départ de l'api
 `);
             process.exit();
         },
@@ -29,23 +18,53 @@ const {action, uri, body, filename, pipe, verbose} = require('./common/arg-parse
     },
 ]);
 
-const file = filename && require(path.join(process.cwd(), filename)) || require(path.join(__dirname, "data", filename));
+const readlineSync = require("readline-sync");
 
-return request({
-    uri : `http://${uri}/facture`,
-    method : action || "GET",
+explore().then(res => {
+    console.log("\nFin du programme.".bold)
+}).catch(err => {
+    console.log(err);
+});
+
+
+function explore(hypermedia) {
+    hypermedia = hypermedia || {}
+    const fulluri = `http://${uri}${hypermedia.uri || ""}`;
+    const fullmethod = hypermedia.method || "GET";
+    console.log(fullmethod, fulluri)
+    return request({
+        uri : fulluri,
+        method : fullmethod,
+    }).then(parseRequest).then(res => {
+        if(res.result) {
+            console.log("\nresultat de la requête :")
+            console.log(JSON.stringify(res.result, null, 4))
+        }
+
+        if(res.__hypermedia && res.__hypermedia.length) {
+            const chosenIndex = askChoice(res.__hypermedia);
+            return explore(res.__hypermedia[chosenIndex])
+        } else {
+            return res;
+        }
+    })
+}
+
+function askChoice(hypermedias) {
+    console.log("\nVoici les options disponibles.\n");
     
-    ...(action === "POST" || action === "PUT") && {json : file || JSON.parse(body)},
-}).then(res => {
-    writeFunc = obj => typeof obj !== "string" && !verbose && !pipe ? console.log(obj) : (pipe ? process.stdout.write : console.log)(JSON.stringify(obj, null, 4));
+    const index = readlineSync.keyInSelect(hypermedias.map(h => h.description), "Que voulez vous faire?");
+    console.log(`vous avez choisis le choix numéro #${index+1} : ${hypermedias[index].description}`);
+    return index;
+}
+
+function parseRequest(res) {
     if(res.error) {
-        writeFunc(res.error);
-    }
-    if(res.statusCode >= 200 && res.statusCode < 300 && 
+        throw res.error;
+    } else if(res.statusCode >= 200 && res.statusCode < 300 && 
             res.body && typeof res.body === "string") {
-        
-        writeFunc(JSON.parse(res.body));
+        return JSON.parse(res.body);
     } else {
-        writeFunc(res.body)
+        return res.body;
     }
-})
+} 

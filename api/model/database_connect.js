@@ -1,6 +1,8 @@
 
 function get(model) {
-    const factures = [{}]; //hardcoded
+    const factures = [{
+        _id : "facture_1",
+    }]; //hardcoded
     return Promise.resolve(factures);
 }
 

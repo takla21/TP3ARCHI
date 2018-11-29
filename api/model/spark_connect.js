@@ -7,20 +7,27 @@ const REQUEST_TIMEOUT = 5 * 1000 * 60;
 
 function createRequest() {
     const id = generateId()
-    addRequestToQueue(id);
-    startSpark(id)
-    return Promise.resolve({id : id});
+    const result = addRequestToQueue(id);
+    if(result) {
+        startSpark(id)
+        return Promise.resolve({id : id});
+    } else {
+        return Promise.reject({
+            message : "Trop de requête",
+            description : `Le nombre de requête de calcul des produits fréquents maximum est de ${MAX_REQUEST} par ${REQUEST_TIMEOUT/1000} secondes`,
+            status : 429
+        });
+    }
 }
 
 function getProgress(id) {
     return Promise.resolve().then(() => {
-        //TODO différence entre PROGRESS, FINISH && 404
-        return requestQueue.some(sReq => sReq.id === id && status !== "COMPLETE");
+        const sReq = requestQueue.find(sReq => sReq.id === id)
+        return sReq && sReq.status;
     })
 }
 
 function getData(id) {
-    //TODO : plus robuste
     return (requestQueue.find(sReq => sReq.id === id && status === "COMPLETE") || {}).data
 }
 
@@ -47,7 +54,7 @@ function addRequestToQueue(id) {
         requestQueue.push({
             status : "PROGRESS",
             id : id,
-            timeoutDate : Infinity //do not timeout when in progress
+            timeoutDate : Infinity //do not timeout when in progress. possible error : sreq blocked in progress will never be removed, causing queue to be full. 
         })
         return true;
     } else {
@@ -59,11 +66,13 @@ function startSpark(id) {
     //TODO some magic with spark
     //when spark finish :
     Promise.resolve({}).then(data => {
-        handleSparkFinish(id, data);
+        handleSparkFinish(null, id, data);
+    }).catch(err => {
+        handleSparkFinish(id, err);
     });
 }
 
-function handleSparkFinish(id, data) {
+function handleSparkFinish(err, id, data) {
     sReq = requestQueue.find(sReq => sReq.id === id);
     if(sReq) {
         sReq.status = "COMPLETE",

@@ -13,11 +13,14 @@ app.use(bodyParser.json());
 
 app.use('/', require('./routes/index'));
 
+app.use(function(req, res, next) {
+    res.sendStatus(404);
+})
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.json(err);
+    res.status(err.status || 500);
+    res.json(err);
 });
 
 

@@ -3,12 +3,12 @@ function createFactureHypermedia(id) {
         {
             uri : `/facture/${id}`,
             method : "PUT",
-            description : `modifier la facture #${id}`
+            description : `Modifier la facture #${id}`
         },
         {
             uri : `/facture/${id}`,
             method : "DELETE",
-            description : `supprime la facture #${id}`
+            description : `Supprimer la facture #${id}`
         }
     ]
 }

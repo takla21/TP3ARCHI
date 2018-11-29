@@ -9,6 +9,8 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "colors": "^1.3.2",
+    "readline-sync": "^1.4.9",
     "request": "^2.81.0"
   }
 }
