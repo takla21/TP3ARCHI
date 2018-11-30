@@ -1,23 +1,55 @@
 
+const cassandra = require('cassandra-driver');
+//contactPoints? keyspace?
+const client = new cassandra.Client({ contactPoints: [process.env.cassandra], keyspace: 'ks1' });
+ 
+
+
 function get(model) {
-    const factures = [{
-        _id : "facture_1",
-    }]; //hardcoded
-    return Promise.resolve(factures);
+    const query = `SELECT * FROM ${model} `;
+    return client.execute(query).then(result => {
+        console.log(result)
+        //TODO : parse result into json array
+        return [{
+            _id : "facture_1",
+        }];
+    });
 }
 
 function create(model, content) {
-    return Promise.resolve({
-        _id : generateId()
-    })
+    const createQuery = `
+    INSERT INTO ${model} (${Object.keys(content).join(", ")})
+    VALUES (${Object.values(content).join(", ")});
+    `;
+
+    return client.execute(createQuery).then(result => {
+        console.log(result)
+        //TODO : parse result into json
+        return {
+            _id : generateId()
+        };
+    });
 }
 
 function replace(model, id, content) {
-    return Promise.resolve({});
+    const updateQuery = `UPDATE ${model} 
+    SET ${Objects.keys(content).map(k => `${k} = ${content[k]}`).join(", ")}
+    WHERE key = ${id};`;
+
+    return client.execute(updateQuery).then(result => {
+        console.log(result)
+        //TODO : parse result into json
+        return {};
+    });
 }
 
 function remove(model, id) {
-    return Promise.resolve({});
+    const deleteQuery = `DELETE FROM ${model} WHERE key = ${id};`;
+    return client.execute(updateQuery).then(result => {
+        console.log(result)
+        //TODO : parse result into json
+        return {};
+    });
 }
 
 module.exports = {

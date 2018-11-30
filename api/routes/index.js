@@ -31,7 +31,6 @@ router.get("", function(req, res, next) {
     })
 });
 
-
 router.get('/facture', function(req, res, next) {
     BD.get("facture").then(factures => {
         const hypermediaFacture = factures.map(f => {
@@ -85,7 +84,7 @@ router.post("/requete-produit-frequent", function(req, res, next) {
                 {
                     uri : `/produit-frequent/requete-status/${id}`,
                     method : "GET",
-                    description : "acceder au résultat de la recherche des produits fréquent"
+                    description : "Acceder au résultat de la recherche des produits fréquents"
                 }
             ]
         })
