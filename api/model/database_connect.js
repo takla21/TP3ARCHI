@@ -1,7 +1,8 @@
 
 const cassandra = require('cassandra-driver');
 //contactPoints? keyspace?
-const client = new cassandra.Client({ contactPoints: [process.env.cassandra], keyspace: 'ks1' });
+
+const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_IP], keyspace: 'ks1' });
  
 
 
