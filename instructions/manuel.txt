@@ -1,0 +1,33 @@
+API
+A venir...
+
+Base de donnée cassandra
+
+Créer une machine virtuelle avec une image ubuntu 16.04
+
+Installation de Cassandra:
+	Pour pouvoir installer Cassandra, il faut installer java. Vous pouvez le faire avec les étapes suivantes:
+		1- sudo add-apt-repository ppa:webupd8team/java
+		2- sudo apt-get update
+		3- sudo apt-get install oracle-java8-set-default
+		4- java -version (pas nécessaire, juste pour vérifier que vous avez installer java)
+
+	Par des problèmes d'avertissement, il est nécessaire ajouter trois clés afin que cassandra marche parfaitement:
+		Pour commencer, vous pouvez chercher les repos suivantes afin d'avoir accès aux clés
+			1- echo "deb http://www.apache.org/dist/cassandra/debian 22x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+			2- echo "deb-src http://www.apache.org/dist/cassandra/debian 22x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+	
+		Voici les commandes à executer pour installer les clés:
+			1- gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
+			2- gpg --export --armor F758CE318D77295D | sudo apt-key add -
+			3- gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
+			4- gpg --export --armor 2B5C1B00 | sudo apt-key add -
+			5- gpg --keyserver pgp.mit.edu --recv-keys 0353B12C
+			6- gpg --export --armor 0353B12C | sudo apt-key add -
+
+	Après d'avoir les clés, updater les packages:
+		1- sudo apt-get update
+
+	Enfin, installez Cassandra:
+		1- sudo apt-get install cassandra
+
