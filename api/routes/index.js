@@ -35,7 +35,7 @@ router.get("", function(req, res, next) {
 
 router.get('/facture', function(req, res, next) {
     BD.get("cycling.facture").then(factures => {
-        const hypermediaFacture = factures.map(f => {
+        const hypermediaFacture = (factures || []).map(f => {
             f.__hypermedia = hypermedia.createFactureHypermedia(f.id);
             return f;
         });

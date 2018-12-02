@@ -1,4 +1,3 @@
-
 const cassandra = require('cassandra-driver');
 
 const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_IP]});
@@ -19,14 +18,11 @@ function get(model) {
 			convertedResult.push({id: rows[i].id, produits : produits})
 		}
         return convertedResult
-    })
-	.catch(e => console.log(e));
+    });
 }
 
 function create(model, content) {
     const createQuery = `INSERT INTO ${model} (${Object.keys(content).join(", ")}) VALUES (${Object.values(content).map(() => "?").join(", ")});`;
-
-    console.log(Object.values(content))
 
     return client.execute(createQuery, Object.values(content), { prepare: true } ).then(result => {
         return {id: content.id}
@@ -34,11 +30,9 @@ function create(model, content) {
 }
 
 function replace(model, id, content) {
-    const updateQuery = `UPDATE ${model} 
-    SET ${Objects.keys(content).map(k => `${k} = ${content[k]}`).join(", ")}
-    WHERE key = ${id};`;
+    const updateQuery = `UPDATE ${model} SET ${Objects.keys(content).map(k => `${k} = ?`).join(", ")} WHERE key = ${id};`;
 
-    return client.execute(updateQuery).then(result => {
+    return client.execute(updateQuery, Object.values(content), { prepare: true }).then(result => {
         console.log(result)
         //TODO : parse result into json
         return {};

@@ -65,11 +65,11 @@ explore().then(res => {
     console.log(safeParse(err));
 });
 
-function exploreHypermedias(hypermedias) {
-    let currentChoice = askChoice(hypermedias);
+function exploreHypermedias(hypermedias, cancelStr) {
+    let currentChoice = askChoice(hypermedias, cancelStr);
     if(currentChoice >= 0) {
         return explore(hypermedias[currentChoice]).then(res => {
-            return exploreHypermedias(hypermedias); 
+            return exploreHypermedias(hypermedias, cancelStr); 
         })
     } else {
         return Promise.resolve();
@@ -82,7 +82,7 @@ function explore(hypermedia) {
         .then(showData)
         .then(res => {
             if(res.__hypermedia && res.__hypermedia.length) {
-                return exploreHypermedias(res.__hypermedia)
+                return exploreHypermedias(res.__hypermedia, "Retour en arrière")
             } else {
                 return res;
             }
@@ -93,10 +93,10 @@ function explore(hypermedia) {
     })
 }
 
-function askChoice(hypermedias) {
+function askChoice(hypermedias, cancelStr) {
     console.log("\nVoici les options disponibles.");
-    const index = readlineSync.keyInSelect(hypermedias.map(h => h.description), "Que voulez vous faire?");
-    console.log(`vous avez choisis le choix numéro #${index+1}` + (index >= 0 ? ` : ${hypermedias[index].description}` : " : Retour en arrière") + "\n");
+    const index = readlineSync.keyInSelect(hypermedias.map(h => h.description), "Que voulez vous faire?", {cancel : cancelStr || "Retour en arrière"});
+    console.log(`vous avez choisis le choix numéro #${index+1}` + (index >= 0 ? ` : ${hypermedias[index].description}` : ` : ${cancelStr || "Retour en arrière"}`) + "\n");
     return index;
 }
 
@@ -109,7 +109,7 @@ function showData(res) {
                     console.log(`élément #${index + 1} :`)
                     console.log(JSON.stringify(data, null, 4));
                     if(data.__hypermedia && data.__hypermedia.length) {
-                        return exploreHypermedias(data.__hypermedia)
+                        return exploreHypermedias(data.__hypermedia, "élément suivant")
                     } else {
                         return data;
                     }

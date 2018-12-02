@@ -12,6 +12,11 @@ const app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 
+app.use(function (req, res, next) {
+    res.set({ 'content-type': 'application/json; charset=utf-8' });
+    next();
+})
+
 app.use('/', require('./routes/index'));
 
 app.use(function(req, res, next) {
