@@ -129,11 +129,20 @@ function makeRequest(hypermedia) {
     hypermedia = hypermedia || {}
     const fulluri = `http://${uri}${hypermedia.uri || ""}`;
     const fullmethod = hypermedia.method || "GET";
+    
+    const body = (fullmethod === "POST" || fullmethod === "PUT") ? askBody(hypermedia) : {}
     console.log(fullmethod, fulluri)
     return request({
         uri : fulluri,
         method : fullmethod,
+        body : body,
+        json : true
     })
+}
+
+function askBody(hypermedia) {
+    const data = readlineSync.question('Quel donnée voulez vous envoyé?');
+    return safeParse(data);
 }
 
 function parseRequest(res) {
