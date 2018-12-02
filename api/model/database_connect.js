@@ -1,20 +1,26 @@
 
 const cassandra = require('cassandra-driver');
-//contactPoints? keyspace?
 
-const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_IP], keyspace: 'ks1' });
- 
-
+const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_IP]});
 
 function get(model) {
     const query = `SELECT * FROM ${model} `;
     return client.execute(query).then(result => {
-        console.log(result)
-        //TODO : parse result into json array
-        return [{
-            _id : "facture_1",
-        }];
-    });
+		var convertedResult = []
+		var rows = result.rows
+		for (var i = 0; i < rows.length; i++)
+		{
+			var produits = []
+			for (var j =0; j < rows[i].produits.length; j++)
+			{
+				var p = rows[i].produits[j]
+				produits.push({nom : p.get(0), prix: p.get(1)})
+			}
+			convertedResult.push({id: rows[i].id, produits : produits})
+		}
+        return convertedResult
+    })
+	.catch(e => console.log(e));
 }
 
 function create(model, content) {

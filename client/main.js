@@ -109,7 +109,7 @@ function showData(res) {
                     console.log(`élément #${index + 1} :`)
                     console.log(JSON.stringify(data, null, 4));
                     if(data.__hypermedia && data.__hypermedia.length) {
-                        return exploreHypermedias(data.hypermedia)
+                        return exploreHypermedias(data.__hypermedia)
                     } else {
                         return data;
                     }

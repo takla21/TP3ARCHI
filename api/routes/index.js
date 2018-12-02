@@ -32,7 +32,7 @@ router.get("", function(req, res, next) {
 });
 
 router.get('/facture', function(req, res, next) {
-    BD.get("facture").then(factures => {
+    BD.get("cycling.facture").then(factures => {
         const hypermediaFacture = factures.map(f => {
             f.__hypermedia = hypermedia.createFactureHypermedia(f._id);
             return f;
@@ -49,7 +49,7 @@ router.get('/facture', function(req, res, next) {
 });
 
 router.post('/facture', function(req, res, next) {
-    BD.create("facture", req.body).then(fact => {
+    BD.create("cycling.facture", req.body).then(fact => {
         res.json({
             message : `Facture #${fact._id} ajouter`,
             result : fact,
@@ -61,7 +61,7 @@ router.post('/facture', function(req, res, next) {
 });
 
 router.put('/facture/:id', function(req, res, next) {
-    BD.replace("facture", req.params.id, req.body).then(result => {
+    BD.replace("cycling.facture", req.params.id, req.body).then(result => {
         res.json({
             message : `Facture #${req.params._id} modifier`,
             result : result,
@@ -71,7 +71,7 @@ router.put('/facture/:id', function(req, res, next) {
 });
 
 router.delete('/facture/:id', function(req, res, next) {
-    BD.remove("facture", req.params.id).then(result => {
+    BD.remove("cycling.facture", req.params.id).then(result => {
         res.json({
             message : `Facture #${req.params._id} supprimer`,
             result : result,
