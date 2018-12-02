@@ -11,5 +11,5 @@ module.exports = function verifyAndParseFacture(body) {
 }
 
 function generateId() {
-    return Math.random() * Math.pow(2, 32)
+    return Math.floor(Math.random() * Math.pow(2, 31))
 }

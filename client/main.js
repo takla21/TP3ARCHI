@@ -141,6 +141,7 @@ function makeRequest(hypermedia) {
 }
 
 function askBody(hypermedia) {
+    return  {"produits" : [{"nom": "p1", "prix": 9.01}, {"nom": "test", "prix": 9.99}]}
     const data = readlineSync.question('Quel donnée voulez vous envoyé?');
     return safeParse(data);
 }

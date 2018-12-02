@@ -24,15 +24,12 @@ function get(model) {
 }
 
 function create(model, content) {
-    const createQuery = `
-    INSERT INTO ${model} (${Object.keys(content).join(", ")})
-    VALUES (${Object.values(content).map(() => "?").join(", ")});
-    `;
+    const createQuery = `INSERT INTO ${model} (${Object.keys(content).join(", ")}) VALUES (${Object.values(content).map(() => "?").join(", ")});`;
 
-    return client.execute(createQuery, Object.values(content)).then(result => {
-        console.log(result)
-        //TODO : parse result into json
-        return {}
+    console.log(Object.values(content))
+
+    return client.execute(createQuery, Object.values(content), { prepare: true } ).then(result => {
+        return {id: content.id}
     });
 }
 
