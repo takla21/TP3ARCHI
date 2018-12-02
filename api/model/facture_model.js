@@ -1,11 +1,11 @@
 cassandra = require("cassandra-driver");
 
-modules.exports = function verifyAndParseFacture(body) {
+module.exports = function verifyAndParseFacture(body) {
     if(!Array.isArray(body.produits)) return ;
     
     const facture = {
         id : body.id || generateId(),
-        produits : (body.produits || []).map(p => cassandra.types.typle(p.nom, p.prix))
+        produits : (body.produits || []).map(p => new cassandra.types.Tuple(p.nom, p.prix))
     }
     return facture
 }
