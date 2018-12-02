@@ -10,10 +10,6 @@ modules.exports = function verifyAndParseFacture(body) {
     return facture
 }
 
-
-
-//temporary function to generate random ID
-
 function generateId() {
     return Math.random() * Math.pow(2, 32)
 }

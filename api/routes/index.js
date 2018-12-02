@@ -36,7 +36,7 @@ router.get("", function(req, res, next) {
 router.get('/facture', function(req, res, next) {
     BD.get("cycling.facture").then(factures => {
         const hypermediaFacture = factures.map(f => {
-            f.__hypermedia = hypermedia.createFactureHypermedia(f._id);
+            f.__hypermedia = hypermedia.createFactureHypermedia(f.id);
             return f;
         });
         res.json({
@@ -54,9 +54,9 @@ router.post('/facture', function(req, res, next) {
     const data = verifyAndParseFacture(req.body);
     BD.create("cycling.facture", data).then(fact => {
         res.json({
-            message : `Facture #${fact._id} ajouter`,
+            message : `Facture #${fact.id} ajouter`,
             result : fact,
-            __hypermedia : hypermedia.createFactureHypermedia(fact._id)
+            __hypermedia : hypermedia.createFactureHypermedia(fact.id)
         });
     }).catch(err => {
         next(err);
@@ -67,9 +67,9 @@ router.put('/facture/:id', function(req, res, next) {
     const data = verifyAndParseFacture(req.body);
     BD.replace("cycling.facture", req.params.id, data).then(result => {
         res.json({
-            message : `Facture #${req.params._id} modifier`,
+            message : `Facture #${req.params.id} modifier`,
             result : result,
-            __hypermedia : hypermedia.createFactureHypermedia(req.params._id)
+            __hypermedia : hypermedia.createFactureHypermedia(req.params.id)
         })
     })
 });
@@ -77,9 +77,9 @@ router.put('/facture/:id', function(req, res, next) {
 router.delete('/facture/:id', function(req, res, next) {
     BD.remove("cycling.facture", req.params.id).then(result => {
         res.json({
-            message : `Facture #${req.params._id} supprimer`,
+            message : `Facture #${req.params.id} supprimer`,
             result : result,
-            __hypermedia : hypermedia.createFactureHypermedia(req.params._id)
+            __hypermedia : hypermedia.createFactureHypermedia(req.params.id)
         })
     })
 });
