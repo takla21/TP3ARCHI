@@ -31,3 +31,28 @@ Installation de Cassandra:
 	Enfin, installez Cassandra:
 		1- sudo apt-get install cassandra
 
+
+
+Spark
+
+Installation et ajout de master à Spark
+	1. Aller sur le site spark.org
+	2. Télécharger spark-2.1.0-bin-hadoop2.4
+	3. Après avoir installé Spark, aller dans le dossier "conf" du répertoire Spark
+	4. Ouvrir un terminal et exécuter la commande "vi spark_env.sh"
+	5. Ajouter les 4 lignes de codes suivant:
+		SPARK_MASTER_HOST=127.0.0.1
+		SPARK_LOCAL_IP=127.0.0.1
+		SPARK_WORKER_INSTANCES=2
+		SPARK_WORKER_CORES=1
+	6. Sauvegarder le fichier et quitter
+	7. Aller dans le dossier "sbin"
+	8. Ensuite, exécuter la commande "./start-master.sh"
+		Nous pouvons alors trouver notre master sur le port 8080, donc on peut tout simplement y avoir accès en entrant "localhost:8080"
+
+Ajout des workers
+	1. Copier le URL du master
+	2. Exécuter la ligne suivante "./start-slave.sh " et ensuite coller le URL master que vous avez copié (par exemple: ./start-slave.sh spark://127.0.0.1:7077)
+		Vous pouvez maintenant rafraîchir la page web du master et vous pouvez maintenant voir que les 2 workers sont présents
+
+...
