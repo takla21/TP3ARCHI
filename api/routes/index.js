@@ -7,6 +7,8 @@ const BD = require(path.join(DOCUMENT_ROOT, "model", "database_connect"));
 const spark = require(path.join(DOCUMENT_ROOT, "model", "spark_connect"));
 const hypermedia = require(path.join(DOCUMENT_ROOT, "model", "hypermedia"));
 
+const verifyAndParseFacture = require(path.join(DOCUMENT_ROOT, "model", "facture_model"))
+
 //API entry point
 router.get("", function(req, res, next) {
     res.json({
@@ -49,7 +51,8 @@ router.get('/facture', function(req, res, next) {
 });
 
 router.post('/facture', function(req, res, next) {
-    BD.create("cycling.facture", req.body).then(fact => {
+    const data = verifyAndParseFacture(req.body);
+    BD.create("cycling.facture", data).then(fact => {
         res.json({
             message : `Facture #${fact._id} ajouter`,
             result : fact,
@@ -61,7 +64,8 @@ router.post('/facture', function(req, res, next) {
 });
 
 router.put('/facture/:id', function(req, res, next) {
-    BD.replace("cycling.facture", req.params.id, req.body).then(result => {
+    const data = verifyAndParseFacture(req.body);
+    BD.replace("cycling.facture", req.params.id, data).then(result => {
         res.json({
             message : `Facture #${req.params._id} modifier`,
             result : result,

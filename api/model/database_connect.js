@@ -26,15 +26,13 @@ function get(model) {
 function create(model, content) {
     const createQuery = `
     INSERT INTO ${model} (${Object.keys(content).join(", ")})
-    VALUES (${Object.values(content).join(", ")});
+    VALUES (${Object.values(content).map(() => "?").join(", ")});
     `;
 
-    return client.execute(createQuery).then(result => {
+    return client.execute(createQuery, Object.values(content)).then(result => {
         console.log(result)
         //TODO : parse result into json
-        return {
-            _id : generateId()
-        };
+        return {}
     });
 }
 
@@ -66,8 +64,3 @@ module.exports = {
     remove : remove
 }
 
-//temporary function to generate random ID
-const crypto = require("crypto")
-function generateId() {
-    return crypto.randomBytes(8).toString("hex");
-}
