@@ -107,9 +107,11 @@ function showData(res) {
             return res.result.reduce((promise, data, index) => {
                 return promise.then(() => {
                     console.log(`élément #${index + 1} :`)
+                    const hyp = data.__hypermedia;
+                    delete data.__hypermedia;
                     console.log(JSON.stringify(data, null, 4));
-                    if(data.__hypermedia && data.__hypermedia.length) {
-                        return exploreHypermedias(data.__hypermedia, "élément suivant")
+                    if(hyp && hyp.length) {
+                        return exploreHypermedias(hyp, "élément suivant")
                     } else {
                         return data;
                     }
