@@ -1,3 +1,6 @@
+Client
+A venir...
+
 API
 A venir...
 
@@ -31,7 +34,35 @@ Installation de Cassandra:
 	Enfin, installez Cassandra:
 		1- sudo apt-get install cassandra
 
+Configuration de Cassandra:
+	Pour rouler un noeud cassandra pavec l'addresse ip de la machine virtuelle, suivez les étapes suivantes:
+		 1- Aller sur le terminal et allez à /etc/cassandra
+		 2- Modifier le fichier cassandra.yaml avec sudo (sudo vim cassandra.yaml) et changez les paramètres suivants:
+			*seed_provider:
+				(...)
+				parameters:
+					-seeds: "127.0.0.1,<adresse ip de la vm>"
+			
+			*listen_address: <addresse ip de la vm>
 
+			*start_rpc: true
+			et commentez les parametres rpc_address et broadcast_rpc_address
+
+Ouvrir Cassandra
+	Pour commencer Cassandra, executer cette commande sur le terminale:
+		- sudo service cassandra start
+	
+	Il est possible de verifier que le service est bien ouvert avec cette commande:
+		- sudo nodetool status
+
+	Pour acceder au noeud, executer cette commande:
+		- cqlsh <addresse-ip de la vm>
+	
+	A partir de cette commande, vous pouvez faire toutes les requetes de cassandra directement sur ce noeud. Vous pouvez
+quittez en tout temps avec la commande "exit"
+
+	Pour fermer Cassandra, executer cette commande:
+		- sudo service cassandra stop	
 
 Spark
 

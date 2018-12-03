@@ -30,7 +30,7 @@ function create(model, content) {
 }
 
 function replace(model, id, content) {
-    const updateQuery = `UPDATE ${model} SET ${Objects.keys(content).map(k => `${k} = ?`).join(", ")} WHERE key = ${id};`;
+    const updateQuery = `UPDATE ${model} SET ${Object.keys(content).map(k => `${k} = ?`).join(", ")} WHERE id = ${id};`;
 
     return client.execute(updateQuery, Object.values(content), { prepare: true }).then(result => {
         console.log(result)
@@ -40,8 +40,8 @@ function replace(model, id, content) {
 }
 
 function remove(model, id) {
-    const deleteQuery = `DELETE FROM ${model} WHERE key = ${id};`;
-    return client.execute(updateQuery).then(result => {
+    const deleteQuery = `DELETE FROM ${model} WHERE id = ${id};`;
+    return client.execute(deleteQuery).then(result => {
         console.log(result)
         //TODO : parse result into json
         return {};

@@ -64,13 +64,15 @@ router.post('/facture', function(req, res, next) {
 });
 
 router.put('/facture/:id', function(req, res, next) {
-    const data = verifyAndParseFacture(req.body);
+    const data = verifyAndParseFacture(req.body, true);
     BD.replace("cycling.facture", req.params.id, data).then(result => {
         res.json({
             message : `Facture #${req.params.id} modifier`,
             result : result,
             __hypermedia : hypermedia.createFactureHypermedia(req.params.id)
         })
+    }).catch(err => {
+        next(err);
     })
 });
 
@@ -81,6 +83,8 @@ router.delete('/facture/:id', function(req, res, next) {
             result : result,
             __hypermedia : hypermedia.createFactureHypermedia(req.params.id)
         })
+    }).catch(err => {
+        next(err);
     })
 });
 
